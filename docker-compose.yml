@@ -1,0 +1,77 @@
+version: "3.2"
+# setting up db conenctions 1.5 h
+# filler error fixes 1h
+# nginx basic setup 40 minutes 
+services:
+    web:
+        image: nginx
+        volumes:
+            - type: bind
+              source: ./src/nginx.conf
+              target: /etc/nginx/nginx.conf
+            - type: bind
+              source: ./src/certs/m2.imse.com.crt
+              target: /etc/nginx/m2.imse.com.crt
+            - type: bind
+              source: ./src/certs/m2.imse.com.key
+              target: /etc/nginx/m2.imse.com.key
+        depends_on: 
+            - app
+        ports: 
+            - "443:443"
+        networks: 
+            imsenet:
+
+    app:
+        image: imse/01651258_app
+        build:
+            dockerfile: app.dockerfile
+            context: ./src
+        depends_on: 
+            - mysql
+        links:
+            - mysql:mysql
+        networks:
+            imsenet:
+
+    filler:
+        image: imse/01651258_data-filler
+        build:
+            dockerfile: filler.dockerfile
+            context: ./src
+        environment: 
+            - PERSONS=200
+            - AUTHORS=100
+            - BOOKS=300
+            - BUILDINGS=5
+        depends_on: 
+            - mysql
+        links: 
+            - mysql:mysql
+        networks: 
+            imsenet:
+
+    mysql:
+        image: mysql:latest
+        restart: always
+        command: --default-authentication-plugin=mysql_native_password
+        environment: 
+            MYSQL_DATABASE: 'library'
+            MYSQL_USER: 'imse'
+            MYSQL_PASSWORD: 'imsepass'
+            MYSQL_ROOT_PASSWORD: 'imsepass'
+        ports: 
+            - '3306:3306'
+        expose: 
+            - '3306'
+        volumes: 
+            - 01651258_mysql:/var/lib/mysql
+        networks: 
+            imsenet:
+
+networks: 
+    imsenet:
+        attachable: true
+
+volumes:
+    01651258_mysql:
