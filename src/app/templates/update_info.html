@@ -1,0 +1,43 @@
+<html lang="en"> 
+    <head>
+        <title>Welcome </title> 
+
+        <link href="{{ url_for('static', filename='style/forms.css') }}" rel="stylesheet" >
+        <script src="{{ url_for('static', filename='style/jQuery.js') }}"></script>
+        
+        <script>
+            $(function() {
+                $('#btn-update').click( function() {
+                    window.location.href = '/update/{{insurance}}/' + document.getElementById('user').value + "+"
+                                                                    + document.getElementById('pass').value + "+"
+                                                                    + document.getElementById('date').value + "+"
+                                                                    + document.getElementById('fname').value + "+"
+                                                                    + document.getElementById('lname').value;
+                });
+            });
+        </script>
+    </head>
+
+    <body>
+        <div class="wrapper">
+            <div class="header">
+                Personal Info
+            </div>	    
+            <div class="content">
+                <br>
+                <div style="margin-top: 10px">
+                    After updating, you will be taken to the login screen.
+                    {% for item in info %}
+                    <input id="user" type="text" placeholder="Username" value="{{item[0]}}"/>
+                    <input id="pass" type="text" placeholder="Password" value="{{item[1]}}"/>
+                    <input id="date" type="text" placeholder="Birthday (YYYY-MM-DD)" value="{{item[2]}}"/>
+                    <input id="fname" type="text" placeholder="First Name" value="{{item[3]}}"/>
+                    <input id="lname" type="text" placeholder="Last Name" value="{{item[4]}}"/>
+                    {% endfor %}
+                    <br><br>
+                    <button id="btn-update" class="button" type="button">Update</button>
+                </div>
+            </div> 	       
+        </div>
+    </body>
+</html>

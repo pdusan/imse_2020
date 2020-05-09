@@ -1,0 +1,56 @@
+<html lang="en"> 
+    <head>
+        <title>Welcome </title> 
+
+        <link href="{{ url_for('static', filename='style/forms.css') }}" rel="stylesheet" >
+        <script src="{{ url_for('static', filename='style/jQuery.js') }}"></script>
+        
+        <script>
+            $(function() {
+                $('#btn-rent').click( function() {
+                    window.location.href = '/new_rental/{{location}}/{{member}}';
+                });
+            });
+            $(function() {
+                $('#btn-return').click( function() {
+                    window.location.href = '/new_return/{{location}}/{{member}}';
+                });
+            });
+            $(function() {
+                $('#btn-info').click( function() {
+                    window.location.href = '/update_info/{{member}}';
+                });
+            });
+            $(function() {
+                $('#logout').click( function() {
+                    window.location.href = '/';
+                });
+            });
+        </script>
+    </head>
+
+    <body>
+        <div class="wrapper">
+            <div class="header">
+                Welcome {{name}}
+            </div>	    
+            <div class="content">
+                <br>
+                Please select a service
+                <div style="margin-top: 10px">
+                    <button id="btn-rent" class="button" type="button">Rent Book</button>
+                    <button id="btn-return" class="button" type="button">Return Book</button>
+                    <button id="btn-info" class="button" type="button">Update Information</button>
+                </div>
+                <br>
+                <div>
+                    {{message}}
+                </div>
+                <br>
+                <div>
+                    <button id="logout" class="red_button" type="button">Logout</button>
+                </div>
+            </div> 	       
+        </div>
+    </body>
+</html>

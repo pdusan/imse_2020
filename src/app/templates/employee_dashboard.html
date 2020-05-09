@@ -1,0 +1,138 @@
+<html lang="en">
+    <head>
+        <title>Dashboard</title>
+
+        <link href="{{ url_for('static', filename='style/dashboard.css') }}" rel="stylesheet" >
+        <script src="{{ url_for('static', filename='style/jQuery.js') }}"></script>
+        
+        <script>
+            $(function() {
+                $('#rent_search').click( function() {
+                    if (document.getElementById('user').value == "") {
+                        return
+                    }
+                    else {
+                        window.location.href = 'search/rent/' + document.getElementById('user').value;
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            $(function() {
+                $('.clickable').click( function() {
+                    document.getElementById('home').value = $(this).data('href')
+                });
+            });
+        </script>
+
+        <script>
+            $(function() {
+                $('#add').click( function() {
+                    window.location.href = '/add_member/' + document.getElementById('fname').value + '+'
+                                                         + document.getElementById('lname').value + '+'
+                                                         + document.getElementById('insurance').value + '+'
+                                                         + document.getElementById('home').value;
+                });
+            });
+        </script>
+        
+        <script>
+            $(function() {
+                $('#logout').click( function() {
+                    window.location.href = '/';
+                });
+            });
+        </script>
+
+    </head>
+
+    <body>
+        <div class="wrapper">
+            <div class="header">
+                Employee Dashboard
+            </div> 
+            <div class="main"> 	  
+                <div class="component">
+                    <br>
+                    <div class="subtitle">
+                        Add new member to Library:
+                    </div>
+                    <br>
+                    <input id="fname" type="text" placeholder="First Name"/>
+                    <input id="lname" type="text" placeholder="Last Name"/>
+                    <input id="insurance" type="text" placeholder="Insurance Number"/>
+                    <input id="home" type="text" placeholder="Select from List" disabled/>
+                    <button id="add" class="button">Add Member</button> 
+                    <table class="table-display" id="buildings" style="margin-left: 40%;">
+                        <tr>
+                            <th>Address</th>
+                        </tr>
+                        {% for item in buildings %}
+                        <tr class="clickable", data-href="{{item[0]}}">
+                            <td>{{item[0]}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    <label id="new_member_info">New Username: {{new_user}}   New Password: {{new_pass}}</label>
+                </div>
+                <div class="component">
+                    <br>
+                    <div class="subtitle">
+                        Members that returned a book to a different library:
+                    </div>
+                    <br>
+                    <table class="table-display" id="returns" style="margin-left: 25%;">
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Username</th>
+                            <th>Home Library</th>
+                        </tr>
+                        {% for item in report %}
+                        <tr>
+                            <td>{{item[0]}}</td>
+                            <td>{{item[1]}}</td>
+                            <td>{{item[2]}}</td>
+                            <td>{{item[3]}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    <br>
+                    <hr>
+                    <button id="logout" class="red_button">Logout</button>   
+                </div>
+                <div class="component">
+                    <br>
+                    <div class="subtitle">
+                        Complete Rental History
+                    </div>
+                    <br>
+                    <table class="table-display" id="rentals" style="margin-left: 10%;">
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Username</th>
+                            <th>Title</th>
+                            <th>Date</th>
+                        </tr>
+                        {% for item in rentals %}
+                        <tr>
+                            <td>{{item[0]}}</td>
+                            <td>{{item[1]}}</td>
+                            <td>{{item[2]}}</td>
+                            <td>{{item[3]}}</td>
+                            <td>{{item[4]}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    <br>
+                    <hr>
+                    Search based on member username:
+                    <input id="user" type="text" placeholder="Username"/>
+                    <button id="rent_search" class="button">Search Rentals</button>   
+                </div>
+            </div>    
+        </div>      
+    </body>
+</html>

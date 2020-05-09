@@ -1,0 +1,31 @@
+<html lang="en"> 
+    <head>
+        <title>Login Error </title> 
+
+        <link href="{{ url_for('static', filename='style/forms.css') }}" rel="stylesheet" >
+        <script src="{{ url_for('static', filename='style/jQuery.js') }}"></script>
+        
+        <script>
+            $(function() {
+                $('#btn-back').click( function() {
+                    window.location.href = '/';
+                });
+            });
+        </script>
+    </head>
+
+    <body>
+        <div class="wrapper">
+            <div class="header">
+                Login Error
+            </div>	    
+            <div class="content">
+                <br>
+                Invalid username or ID
+                <div style="margin-top: 50px">
+                    <button id="btn-back" class="button" type="button">Back</button>
+                </div>
+            </div> 	       
+        </div>
+    </body>
+</html>

@@ -1,0 +1,39 @@
+<html lang="en"> 
+    <head>
+        <title>Rental</title> 
+
+        <link href="{{ url_for('static', filename='style/forms.css') }}" rel="stylesheet" >
+        <script src="{{ url_for('static', filename='style/jQuery.js') }}"></script>
+        
+        <script>
+            $(function() {
+                $('.clickable').click( function() {
+                    window.location.href = '/member_dashboard/' + $(this).data('href') + '/{{member}}+IMSE Libraries';
+                });
+            });
+        </script>
+    </head>
+
+    <body>
+        <div class="wrapper">
+            <div class="header">
+                Select Your Current Location
+            </div>	    
+            <div class="content">
+                <br>
+                <div>
+                    <table class="table-display" id="reservations" style="margin-left: 40%;">
+                        <tr>
+                            <th>Library Address</th>
+                        </tr>
+                        {% for item in buildings %}
+                        <tr class="clickable", data-href="{{item[0]}}">
+                            <td>{{item[0]}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div> 	       
+        </div>
+    </body>
+</html>

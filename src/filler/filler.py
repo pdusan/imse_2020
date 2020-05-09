@@ -1,4 +1,3 @@
-#time taken = 3 hours
 import random
 import names
 import os
@@ -15,16 +14,17 @@ NUM_EMPLOYEES = int(NUM_PERSONS * 0.2)
 NUM_MEMBERS = int(NUM_PERSONS * 0.8)
 NUM_AUTHORS = int(os.environ.get("AUTHORS", 10))
 NUM_BOOKS = int(os.environ.get("BOOKS", 30))
-NUM_BUILDINGS = int(os.environ.get("BUILDINGS", 4))
+NUM_BUILDINGS = int(os.environ.get("BUILDINGS", 2))
 NUM_SHELVES = int(NUM_BUILDINGS * 50)
 NUM_RENTALS = int(NUM_BOOKS * 0.9)
+NUM_RETURNS = int(NUM_BOOKS * 0.4)
 
 TABLES = {}
 TABLES['persons'] = (
     """CREATE TABLE persons (
-        first_name varchar(32) NOT NULL,
-        last_name varchar(32) NOT NULL,
-        birthday date NOT NULL,
+        first_name varchar(32),
+        last_name varchar(32),
+        birthday date,
         insurance_number int(8) NOT NULL,
         PRIMARY KEY(insurance_number)
     )"""
@@ -87,7 +87,10 @@ TABLES['books'] = (
     """CREATE TABLE books (
         isbn int(13) NOT NULL AUTO_INCREMENT,
         title varchar(32) NOT NULL,
-        PRIMARY KEY (isbn)
+        room_number int(1) NOT NULL,
+        building_address varchar(32) NOT NULL,
+        PRIMARY KEY (isbn),
+        FOREIGN KEY (room_number, building_address) REFERENCES shelves (room_number, building_address) ON DELETE CASCADE
     )"""
 )
 TABLES['bookauthor'] = (
@@ -104,10 +107,25 @@ TABLES['rentals'] = (
         member_username varchar(8) NOT NULL,
         isbn int(13) NOT NULL,
         rental_date date NOT NULL,
-        PRIMARY KEY (member_username, isbn, rental_date),
-        FOREIGN KEY (member_username) REFERENCES members (username) ON DELETE CASCADE,
+        building_address varchar(32) NOT NULL,
+        PRIMARY KEY (member_username, isbn, rental_date, building_address),
+        FOREIGN KEY (member_username) REFERENCES members (username) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (building_address) REFERENCES shelves (building_address),
         FOREIGN KEY (isbn) REFERENCES books (isbn) ON DELETE CASCADE
     )"""
+)
+TABLES['returns'] = (
+    """CREATE TABLE returns (
+        member_username varchar(8) NOT NULL,
+        isbn int(13) NOT NULL,
+        return_date date NOT NULL,
+        building_address varchar(32) NOT NULL,
+        PRIMARY KEY (member_username, isbn, return_date, building_address),
+        FOREIGN KEY (member_username) REFERENCES members (username) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (building_address) REFERENCES shelves (building_address),
+        FOREIGN KEY (isbn) REFERENCES books (isbn) ON DELETE CASCADE
+    )
+    """
 )
 
 def password(length=8):
@@ -172,7 +190,7 @@ if __name__ == '__main__':
     
     cursor.execute("DELETE FROM buildings")
     for i in range(NUM_BUILDINGS):
-        stmt = "INSERT INTO buildings VALUES ('{}','{}')".format("Address "+str(i), random.randint(0, 6))
+        stmt = "INSERT INTO buildings VALUES ('{}','{}')".format("Address_"+str(i), random.randint(0, 6))
         try:
             cursor.execute(stmt)
             con.commit()
@@ -212,10 +230,15 @@ if __name__ == '__main__':
             continue
 
     cursor.execute("DELETE FROM members")
+    first = True
     for i in range(NUM_MEMBERS):
         person = random.choice(people)
         people.remove(person)
-        stmt = "INSERT INTO members VALUES ('{}','{}','{}','{}','{}')".format(password(), person[0], password(), random_date(), random.choice(buildings)[0])
+        if first is True:
+            stmt = "INSERT INTO members VALUES ('{}','{}','{}','{}','{}')".format("12345678", person[0], password(), random_date(), random.choice(buildings)[0])
+            first = False
+        else:
+            stmt = "INSERT INTO members VALUES ('{}','{}','{}','{}','{}')".format(password(), person[0], password(), random_date(), random.choice(buildings)[0])
         try:
             cursor.execute(stmt)
             con.commit()
@@ -233,6 +256,8 @@ if __name__ == '__main__':
             continue
     
     cursor.execute("DELETE FROM books")
+    cursor.execute("SELECT room_number, building_address FROM shelves")
+    shelves = cursor.fetchall()
     stmt = "INSERT INTO books VALUES ('{}','{}')".format(1000000000000, "The life of " + names.get_full_name())
     try:
         cursor.execute(stmt)
@@ -240,7 +265,7 @@ if __name__ == '__main__':
     except:
         pass
     for i in range(NUM_BOOKS):
-        stmt = "INSERT INTO books (title) VALUES ('{}')".format("The life of " + names.get_full_name())
+        stmt = "INSERT INTO books (title, room_number, building_address) VALUES ('{}', '{}', '{}')".format("The life of " + names.get_full_name(), random.choice(shelves)[0], random.choice(shelves)[1])
         try:
             cursor.execute(stmt)
             con.commit()
@@ -264,7 +289,16 @@ if __name__ == '__main__':
     cursor.execute("SELECT username FROM members")
     members = cursor.fetchall()
     for i in range(NUM_RENTALS):
-        stmt = "INSERT INTO rentals VALUES ('{}','{}','{}')".format(random.choice(members)[0], random.choice(books)[0], random_date())
+        stmt = "INSERT INTO rentals VALUES ('{}','{}','{}','{}')".format(random.choice(members)[0], random.choice(books)[0], random_date(), random.choice(buildings)[0])
+        try:
+            cursor.execute(stmt)
+            con.commit()
+        except:
+            continue
+    
+    cursor.execute("DELETE FROM returns")
+    for i in range(NUM_RETURNS):
+        stmt = "INSERT INTO returns VALUES ('{}','{}','{}','{}')".format(random.choice(members)[0], random.choice(books)[0], random_date(), random.choice(buildings)[0])
         try:
             cursor.execute(stmt)
             con.commit()

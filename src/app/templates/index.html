@@ -1,0 +1,54 @@
+<html lang="en"> 
+    <head>
+        <title>IMSE Libraries </title> 
+
+        <link href="{{ url_for('static', filename='style/forms.css') }}" rel="stylesheet" >
+        <script src="{{ url_for('static', filename='style/jQuery.js') }}"></script>
+        
+        <script>
+            $(function() {
+                $('#btn-login').click( function() {
+                    var radioValue = $("input[name='category']:checked").val();
+                    if (radioValue == 'member') {
+                        window.location.href = '/member/login/' + document.getElementById('input-id').value;
+                        return;
+                    }
+                    if (radioValue == 'employee') {
+                        window.location.href = '/employee/login/' + document.getElementById('input-id').value;
+                        return;
+                    }
+                    else {
+                        window.location.href = '/error'
+                    }
+                });
+            });
+        </script>
+    </head>
+
+    <body>
+        <div class="wrapper">
+            <div class="header">
+                IMSE Libraries
+            </div>	    
+            <div class="content">
+                <br>
+                Enter username or ID
+                <div style="margin-top: 20px">
+                    <input id="input-id" type="text" placeholder="Username or ID"/>
+                <div style="margin-top: 10px">
+                    <button id="btn-login" class="button" type="button">Log In</button>
+                </div>
+                <br>
+                <div>
+                    Demo login: 12345678 - Member, 10000000 - Employee
+                </div>
+                <div>
+                    <input type="radio" id="member" name="category" value="member" checked>
+                    <label for="member">Member Login</label><br>
+                    <input type="radio" id="employee" name="category" value="employee">
+                    <label for="employee">Employee Login</label><br>
+                </div>
+            </div> 	       
+        </div>
+    </body>
+</html>

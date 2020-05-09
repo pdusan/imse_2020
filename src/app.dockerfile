@@ -6,8 +6,12 @@ RUN pip install --trusted-host pypi.python.org -r /app/main/req.txt
 
 WORKDIR /app
 
-ADD app/app.py /app/main/
+ADD app/app.py /app/
+
+ADD app/templates /app/templates/
+
+ADD app/static /app/static/
 
 ENV PYTHONPATH /app
 
-CMD [ "python", "main/app.py" ]
+CMD [ "python", "app.py" ]
