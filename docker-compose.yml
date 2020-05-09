@@ -1,8 +1,4 @@
 version: "3.2"
-# setting up db conenctions 1.5 h
-# filler error fixes 1h
-# filler time taken = 3 hours
-# nginx basic setup 40 minutes 
 services:
     web:
         image: nginx
@@ -10,12 +6,6 @@ services:
             - type: bind
               source: ./src/nginx.conf
               target: /etc/nginx/nginx.conf
-            - type: bind
-              source: ./src/app/templates
-              target: /usr/share/nginx/templates
-            - type: bind
-              source: ./src/app/static/style
-              target: /usr/share/nginx/static/style
             - type: bind
               source: ./src/certs/m2.imse.com.crt
               target: /etc/nginx/m2.imse.com.crt
@@ -47,10 +37,10 @@ services:
             dockerfile: filler.dockerfile
             context: ./src
         environment: 
-            - PERSONS=20
+            - PERSONS=100
             - AUTHORS=10
-            - BOOKS=30
-            - BUILDINGS=2
+            - BOOKS=50
+            - BUILDINGS=4
         depends_on: 
             - mysql
         links: 
